@@ -1,10 +1,10 @@
-// Implementa��o do k-NN (k-nearest neighbors algorithm)
-
 #include <iostream>
 #include <vector>
 #include <math.h>
 #include <set>
 #include <map>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -74,13 +74,8 @@ public:
 	}
 };
 
-// fun��o que retorna a dist�ncia euclidiana entre 2 indiv�duos
 double obterDistEuclidiana(Individuo ind1, Individuo ind2)
 {
-	/*
-		a dist�ncia euclidiana � a raiz quadrada da soma das
-		diferen�as dos valores dos atributos elevado ao quadrado
-	*/
 
 	double soma = pow((ind1.getA() - ind2.getA()), 2) +
 				  pow((ind1.getB() - ind2.getB()), 2) +
@@ -93,11 +88,9 @@ double obterDistEuclidiana(Individuo ind1, Individuo ind2)
 	return sqrt(soma);
 }
 
-// essa fun��o classifica uma nova amostra
 string classificarAmostra(vector<Individuo>& individuos,
 						  Individuo novo_exemplo, int K)
 {
-	// se o K for par decrementa
 	if(K % 2 == 0)
 	{
 		K--;
@@ -105,38 +98,18 @@ string classificarAmostra(vector<Individuo>& individuos,
 			K = 1;
 	}
 
-	// obt�m o tamanho do vetor
 	int tam_vet = individuos.size();
 
-	/*
-		set de pairs da dist�ncia de cada indiv�duo
-		do conjunto de treinamento para o novo exemplo
-		cada pair � composto pela dist�ncia e o �ndice
-		do indiv�duo no vetor
-	*/
 	set<pair<double, int> > dist_individuos; //usar o set garante que os elementos serão inseridos em ordem de distância
 
-	/*
-		calcula-se a dist�ncia euclidiana do novo exemplo
-		para cada amostra do conjunto de treinamento
-	*/
 	for(int i = 0; i < tam_vet; i++)
 	{
 		double dist = obterDistEuclidiana(individuos[i], novo_exemplo);
 		dist_individuos.insert(make_pair(dist, i));
 	}
-	/*
-	para decidir a qual classe pertence o novo exemplo,
-	basta verificar a classe mais frequente dos K
-	vizinhos mais pr�ximos
-	*/
+
 	set<pair<double, int> >::iterator it; //setando um iterator para correr no set de dist_individuos
 
-	/*
-		o contador de Iris-setosa estar� no �ndice 0,
-		o contador de Iris-versicolor estar� no �ndice 1
-		e o contador de Iris-virginica estar� no �ndice 2
-	*/
 	vector<int> cont_classes(8);
 
 	int contK = 0;
@@ -161,19 +134,6 @@ string classificarAmostra(vector<Individuo>& individuos,
 	}
 
 	string classe_classificacao;
-  /*set<int> contadorClasses;
-  for (int y = 0; y < 8; y++) {
-    contadorClasses.insert(cont_classes[y]);
-  }
-
-  if (*contadorClasses.begin() == cont_classes[0]) classe_classificacao = "cp";
-  else if (*contadorClasses.begin() == cont_classes[1]) classe_classificacao = "im";
-  else if (*contadorClasses.begin() == cont_classes[2]) classe_classificacao = "pp";
-  else if (*contadorClasses.begin() == cont_classes[3]) classe_classificacao = "imU";
-  else if (*contadorClasses.begin() == cont_classes[4]) classe_classificacao = "om";
-  else if (*contadorClasses.begin() == cont_classes[5]) classe_classificacao = "omL";
-  else if (*contadorClasses.begin() == cont_classes[6]) classe_classificacao = "imL";
-  else classe_classificacao = "imS"; */
 
 	if(cont_classes[0] >= cont_classes[1] && cont_classes[0] >= cont_classes[2] && cont_classes[0] >= cont_classes[3]
     && cont_classes[0] >= cont_classes[4] && cont_classes[0] >= cont_classes[5] && cont_classes[0] >= cont_classes[6]
@@ -214,54 +174,94 @@ int main(int argc, char *argv[])
 
 	vector<Individuo> individuos;
 
-	/*
-		o K � a quantidade de vizinhos que ser�o
-		levados em conta para classifica��o de um
-		novo dado, � recomend�vel que seja �mpar
-		para que n�o possa haver empate
-	*/
-	int K = 3;
+	int K;
+	int tam_treinamento;
+	int tam_testes;
 
-	// tamanho do conjunto de dados de treinamento
-	int tam_treinamento = 300;
 
-	/*
-		o processo de treinamento consiste em apenas
-		armazenar o conjunto de dados de treinamento
-	*/
-	for(int i = 0; i < tam_treinamento; i++)
-	{
-		string classe, name;
-		double a, b, c, d, e, f, g;
+	int base;
 
-		cin >> name >> a >> b >> c >> d >> e >> f >> g >> classe;
+	cout << "Digite 1 para entrar com a base de dados manualmente." << endl;
+	cout << "Digite 2 para usar a base de dados Ecoli Dataset." << endl;
+	cin >> base;
 
-		individuos.push_back(Individuo(name, a, b, c, d, e, f, g, classe));
+	if (base == 1){
+		cout << "Qual será o tamnho do conjunto de treinamento? ";
+		cin >> tam_treinamento;
+		cout << "Digite o conjunto de treinamento. Obs.: siga a ordem: nome, atributo1..atributo7, classe:" << endl;
+		for(int i = 0; i < tam_treinamento; i++)
+		{
+			cout << "Dado " << i + 1 << " :" <<endl;
+			string classe, name;
+			double a, b, c, d, e, f, g;
+
+			cin >> name >> a >> b >> c >> d >> e >> f >> g >> classe;
+
+			individuos.push_back(Individuo(name, a, b, c, d, e, f, g, classe));
+		}
+
+		cout << "Entre com o valor dos K vizinhos a serem levados em conta: ";
+		cin >> K;
+
+		cout << "Quantos testes serão executados?";
+		cin >> tam_testes;
+
+		int acertos = 0;
+
+
+		for(int i = 0; i < tam_testes; i++)
+		{
+			cout << "Entre com o caso de teste para classificação. Obs.: siga a ordem: nome, atributo1..atributo7, classe: ";
+			string classe, name;
+			double a, b, c, d, e, f, g;
+
+	    cin >> name >> a >> b >> c >> d >> e >> f >> g >> classe;
+
+			Individuo ind(name, a, b, c, d, e, f, g, classe);
+
+			string classe_obtida = classificarAmostra(individuos, ind, K);
+
+			cout << "Classe esperada: " << classe << "\n";
+			cout << "Classe obtida: " << classe_obtida << "\n\n";
+
+			if(classe == classe_obtida)
+				acertos++;
+		}
+
+		cout << acertos << " acertos de um total de " << tam_testes << " testes.\n";
 	}
 
-	int acertos = 0;
-	int tam_testes = 336 - tam_treinamento;
-
-	// processo de classifica��o
-	for(int i = 0; i < tam_testes; i++)
-	{
-		string classe, name;
+	else if (base == 2){
+		int acertos = 0;
+		cout << "Utilizando o Dataset Ecoli! Localizado em ecoliTreino.txt.]" << endl;
+		cout << "Entre com o valor dos K vizinhos a serem levados em conta: ";
+		cin >> K;
+		ifstream file("ecoliTreino.txt", ios::in);
+		string name, classe;
 		double a, b, c, d, e, f, g;
+		if (!file) cerr << "Dataset não encontrado!" << '\n';
+		while (file >> name >> a >> b >> c >> d >> e >> f >> g >> classe){
+			individuos.push_back(Individuo(name, a, b, c, d, e, f, g, classe));
+		}
 
-    cin >> name >> a >> b >> c >> d >> e >> f >> g >> classe;
+		cout << "Casos de teste de classificação em ecoliTeste.txt." << endl;
+		ifstream file2("ecoliTeste.txt", ios::in);
+		if (!file) cerr << "Dataset não encontrado!" << '\n';
+		int size = 0;
+		while (file2 >> name >> a >> b >> c >> d >> e >> f >> g >> classe){
+			size++;
+			individuos.push_back(Individuo(name, a, b, c, d, e, f, g, classe));
+			Individuo ind(name, a, b, c, d, e, f, g, classe);
+			string classe_obtida = classificarAmostra(individuos, ind, K);
 
-		Individuo ind(name, a, b, c, d, e, f, g, classe);
+			cout << "Classe esperada: " << classe << "\n";
+			cout << "Classe obtida: " << classe_obtida << "\n\n";
 
-		string classe_obtida = classificarAmostra(individuos, ind, K);
-
-		cout << "Classe esperada: " << classe << "\n";
-		cout << "Classe obtida: " << classe_obtida << "\n\n";
-
-		if(classe == classe_obtida)
-			acertos++;
+			if(classe == classe_obtida)
+				acertos++;
+		}
+		cout << acertos << " acertos de um total de " << size << " testes.\n";
 	}
-
-	cout << acertos << " acertos de um total de " << tam_testes << " testes.\n";
 
 	return 0;
 }

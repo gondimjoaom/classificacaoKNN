@@ -1,16 +1,18 @@
 # k-NN
-Implementação do algoritmo k-NN para classificação do Iris data.
-
-k-NN é um dos algoritmos mais simples de aprendizado de máquina (machine learning).
-
+Implementação do algoritmo k-NN para classificação do Ecoli data.
 k-NN = k vizinhos mais próximos (k-nearest neighbors).
+A implementação foi feita em C++.
 
-A implementação foi feita em C++ com o intuito didático para o Curso C++ para iniciantes.
+## Manual de uso
+O arquivo zip possui os seguintes arquivos padrão:
 
-Playlist do curso: https://www.youtube.com/playlist?list=PL8eBmR3QtPL13Dkn5eEfmG9TmzPpTp0cV
+- ecoli.txt (base de dados)
+- ecoliTreino.txt (base para treino a ser executada com o knnProtein)
+- ecoliTeste.txt (base para teste a ser executada com o knnProtein)
+- knnProtein.cpp (arquivo com o código do programa)
+- knnProtein (executável)
 
-O arquivo dataset.txt contém os dados do famoso dataset Iris utilizado bastante para exemplificar o uso de algoritmos para aprendizado de máquina.
+Para executar: ./knnProtein 
 
-Mais informações sobre o k-NN: https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
 
-Exemplo de execução: executavel < dataset.txt
+
