@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
 
 	else if (base == 2){
 		int acertos = 0;
-		cout << "Utilizando o Dataset Ecoli! Localizado em ecoliTreino.txt." << endl;
+		cout << "Utilizando o Dataset Ecoli! Localizado em ecoliTreino.txt.]" << endl;
 		cout << "Entre com o valor dos K vizinhos a serem levados em conta: ";
 		cin >> K;
 		ifstream file("ecoliTreino.txt", ios::in);
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
 		int size = 0;
 		while (file2 >> name >> a >> b >> c >> d >> e >> f >> g >> classe){
 			size++;
-			//individuos.push_back(Individuo(name, a, b, c, d, e, f, g, classe));
+			individuos.push_back(Individuo(name, a, b, c, d, e, f, g, classe));
 			Individuo ind(name, a, b, c, d, e, f, g, classe);
 			string classe_obtida = classificarAmostra(individuos, ind, K);
 
