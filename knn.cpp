@@ -1,4 +1,4 @@
-// Implementação do k-NN (k-nearest neighbors algorithm)
+// Implementaï¿½ï¿½o do k-NN (k-nearest neighbors algorithm)
 
 #include <iostream>
 #include <vector>
@@ -50,23 +50,23 @@ public:
 	}
 };
 
-// função que retorna a distância euclidiana entre 2 indivíduos
+// funï¿½ï¿½o que retorna a distï¿½ncia euclidiana entre 2 indivï¿½duos
 double obterDistEuclidiana(Individuo ind1, Individuo ind2)
 {
 	/*
-		a distância euclidiana é a raiz quadrada da soma das
-		diferenças dos valores dos atributos elevado ao quadrado
+		a distï¿½ncia euclidiana ï¿½ a raiz quadrada da soma das
+		diferenï¿½as dos valores dos atributos elevado ao quadrado
 	*/
-	
+
 	double soma = pow((ind1.getA() - ind2.getA()), 2) +
 				  pow((ind1.getB() - ind2.getB()), 2) +
 				  pow((ind1.getC() - ind2.getC()), 2) +
 				  pow((ind1.getD() - ind2.getD()), 2);
-	
+
 	return sqrt(soma);
 }
 
-// essa função classifica uma nova amostra
+// essa funï¿½ï¿½o classifica uma nova amostra
 string classificarAmostra(vector<Individuo>& individuos,
 						  Individuo novo_exemplo, int K)
 {
@@ -78,19 +78,19 @@ string classificarAmostra(vector<Individuo>& individuos,
 			K = 1;
 	}
 
-	// obtém o tamanho do vetor
+	// obtï¿½m o tamanho do vetor
 	int tam_vet = individuos.size();
 
 	/*
-		set de pairs da distância de cada indivíduo
+		set de pairs da distï¿½ncia de cada indivï¿½duo
 		do conjunto de treinamento para o novo exemplo
-		cada pair é composto pela distância e o índice
-		do indivíduo no vetor
+		cada pair ï¿½ composto pela distï¿½ncia e o ï¿½ndice
+		do indivï¿½duo no vetor
 	*/
 	set<pair<double, int> > dist_individuos;
 
 	/*
-		calcula-se a distância euclidiana do novo exemplo
+		calcula-se a distï¿½ncia euclidiana do novo exemplo
 		para cada amostra do conjunto de treinamento
 	*/
 	for(int i = 0; i < tam_vet; i++)
@@ -101,23 +101,23 @@ string classificarAmostra(vector<Individuo>& individuos,
 	/*
 	para decidir a qual classe pertence o novo exemplo,
 	basta verificar a classe mais frequente dos K
-	vizinhos mais próximos
+	vizinhos mais prï¿½ximos
 	*/
 	set<pair<double, int> >::iterator it;
-	
+
 	/*
-		o contador de Iris-setosa estará no índice 0,
-		o contador de Iris-versicolor estará no índice 1
-		e o contador de Iris-virginica estará no índice 2
+		o contador de Iris-setosa estarï¿½ no ï¿½ndice 0,
+		o contador de Iris-versicolor estarï¿½ no ï¿½ndice 1
+		e o contador de Iris-virginica estarï¿½ no ï¿½ndice 2
 	*/
 	vector<int> cont_classes(3);
-	
+
 	int contK = 0;
 
 	for(it = dist_individuos.begin(); it != dist_individuos.end(); it++)
 	{
 		if(contK == K) break;
-		
+
 		string classe = individuos[it->second].getClasse();
 
 		if(classe == "Iris-setosa")
@@ -129,9 +129,9 @@ string classificarAmostra(vector<Individuo>& individuos,
 
 		contK++;
 	}
-	
+
 	string classe_classificacao;
-	
+
 	if(cont_classes[0] >= cont_classes[1] && cont_classes[0] >= cont_classes[2])
 		classe_classificacao = "Iris-setosa";
 	else if(cont_classes[1] >= cont_classes[0] && cont_classes[1] >= cont_classes[2])
@@ -148,13 +148,13 @@ int main(int argc, char *argv[])
 	vector<Individuo> individuos;
 
 	/*
-		o K é a quantidade de vizinhos que serão
-		levados em conta para classificação de um
-		novo dado, é recomendável que seja ímpar
-		para que não possa haver empate
+		o K ï¿½ a quantidade de vizinhos que serï¿½o
+		levados em conta para classificaï¿½ï¿½o de um
+		novo dado, ï¿½ recomendï¿½vel que seja ï¿½mpar
+		para que nï¿½o possa haver empate
 	*/
 	int K = 3;
-	
+
 	// tamanho do conjunto de dados de treinamento
 	int tam_treinamento = 105;
 
@@ -174,26 +174,26 @@ int main(int argc, char *argv[])
 
 	int acertos = 0;
 	int tam_testes = 150 - tam_treinamento;
-	
-	// processo de classificação
+
+	// processo de classificaï¿½ï¿½o
 	for(int i = 0; i < tam_testes; i++)
 	{
 		string classe;
 		double a, b, c, d;
 
 		cin >> a >> b >> c >> d >> classe;
-		
+
 		Individuo ind(a, b, c, d, classe);
-		
+
 		string classe_obtida = classificarAmostra(individuos, ind, K);
-		
+
 		cout << "Classe esperada: " << classe << "\n";
 		cout << "Classe obtida: " << classe_obtida << "\n\n";
-		
+
 		if(classe == classe_obtida)
 			acertos++;
 	}
-	
+
 	cout << acertos << " acertos de um total de " << tam_testes << " testes.\n";
 
 	return 0;
